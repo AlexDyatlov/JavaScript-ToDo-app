@@ -2,7 +2,12 @@
 const form = document.querySelector('#newTaskForm');
 const input = document.querySelector('#addNewTask');
 const taskList = document.querySelector('#list-group');
-const emptyListItem = document.querySelector('#empty-list-item')
+
+// Загрузить данные
+loadData();
+
+// Скрываем или показываем запись о том что список дел пуст
+toggleEmptyListItem();
 
 // 1. Добавление новой задачи
 // Отслеживание отправки формы
@@ -29,10 +34,13 @@ form.addEventListener('submit', function (e) {
   toggleEmptyListItem () 
 
   // очищаем
-  input.value = ''
+  input.value = '';
 
   // возвращаем фокус на поле ввода
   input.focus();
+
+  // Сохранить данные
+  saveData();
 })
 
 taskList.addEventListener('click', function(e) {
@@ -44,7 +52,12 @@ taskList.addEventListener('click', function(e) {
     // Находим родительский тег <li> и уадляем его
     e.target.closest('.list-group-item').remove();
 
+    // Скрываем или показываем запись о том что список дел пуст
     toggleEmptyListItem();
+
+    // Сохранить данные
+    saveData();
+
   } else if (e.target.getAttribute('data-action') == 'ready') {
   
     // Находим родительский тег <li>
@@ -61,7 +74,6 @@ taskList.addEventListener('click', function(e) {
 
     // удалить кнопку 'готово' и 'удалить'
     parentElement.querySelector('button[data-action="ready"]').remove();
-    parentElement.querySelector('button[data-action="delete-task"]').remove();
 
   }
   
@@ -70,9 +82,25 @@ taskList.addEventListener('click', function(e) {
 // скрываем "список дел пуст"
 function toggleEmptyListItem () {
   if (taskList.children.length > 1) {
-    emptyListItem.style.display = 'none';
+   document.querySelector('#empty-list-item').style.display = 'none';
   } else {
-    emptyListItem.style.display = 'block';
+    document.querySelector('#empty-list-item').style.display = 'block';
   }
 }
 
+// Функция сохранения данных
+function saveData() {
+  localStorage.setItem('todoList', taskList.innerHTML);
+}
+// Фун-ия загрузки данных
+function loadData() {
+  if (localStorage.getItem('todoList')) {
+    taskList.innerHTML = localStorage.getItem('todoList')
+  }
+}
+
+// Сохраняем данные LS
+// localStorage.setItem('name', '6778687')
+
+// // Получаем данные из LS
+// localStorage.getItem('name')
